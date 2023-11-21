@@ -1,0 +1,41 @@
+service: backend
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+plugins:
+  - serverless-offline
+  - serverless-offline-watcher
+
+custom:
+  serverless-offline-watcher:
+    - path: src/*.js
+      command: echo "code modified"
+
+  serverless-offline:
+    noPrependStageInUrl: true
+
+functions:
+  hello:
+    handler: handler.serverless
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors:
+            origin: "http://localhost:3001"
+
+            allowCredentials: true
+      - http:
+          path: /
+          method: ANY
+          cors:
+            origin: "http://localhost:3001"
+
+            allowCredentials: true
+
+    environment:
+      PORT: 3000
